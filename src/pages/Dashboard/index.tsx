@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
 import logoImg from '../../assets/image/logo-svg.svg';
 
@@ -17,7 +17,15 @@ interface Repository {
 
 
 const Dashboard: React.FC = () => {
-  const [repositories, setRepositories] = useState<Repository[]>([]);
+  // aAqui ele vai executar essa funcao sempre que a aplicacao for recarregada pela primeira vez, ngOnInit
+  const [repositories, setRepositories] = useState<Repository[]>(() => {
+    const storagedRepositories = localStorage.getItem('@GithubExplorer:repositories');
+    if (storagedRepositories) {
+      return JSON.parse(storagedRepositories);
+    } else {
+      return [];
+    }
+  });
   const [newRepo, setNewRepo] = useState('');
   const [inputError, setInputError] = useState('');
 
@@ -37,6 +45,10 @@ const Dashboard: React.FC = () => {
       setInputError('Erro na buscar por esse repositório');
     }
   }
+
+  useEffect(() => {
+    localStorage.setItem('@GithubExplorer:repositories', JSON.stringify(repositories));
+  }, [repositories])
 
   return (
     <>
